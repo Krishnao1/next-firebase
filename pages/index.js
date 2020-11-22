@@ -1,65 +1,118 @@
 import Head from 'next/head'
+import Link from 'next/link'
+import { useState , useEffect } from 'react'
 import styles from '../styles/Home.module.css'
+import fire from '../component/firebase-config'
+import CreatePost from '../component/CreatePost'
 
-export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+const Home = () => {
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+  const [blogs, setBlogs] = useState([]);
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+  
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+  useEffect(() => {
+    fire.firestore()
+      .collection('blog')
+      .onSnapshot(snap => {
+        const blogs = snap.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setBlogs(blogs);
+      });
+  }, []);
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
 
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+      return (<div style={{margin:'auto',marginLeft:'50px'}}>
+          <Head>
+            <title>Blog App</title>
+          </Head>
+          <h1>Blog</h1>
+          <ul>
+            {blogs.map(blog =>
+              <li key={blog.id}>
+                 <Link href='/[id]' as={'/' + blog.id}>
+                  <a style={{color:'red'}}>{blog.title}</a>
+                  </Link>
+              </li>
+            )}
+          </ul>
+          <CreatePost />
         </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+      )
 }
+export default Home;
+
+
+
+
+
+
+
+// Home.getInitialProps = async ()=>{
+//     let firebase = await loadFirebase()
+//     const result = await new Promise(( resolve , reject )=>{      
+//      firebase.firestore().
+//     collection('users').limit(10).get().then((snapshot)=>{
+//       let data =[]
+//       snapshot.docs.forEach((doc)=>{
+//       data.push(Object.assign({ 
+//         id:doc.id,
+//        user:doc.data().user}))
+//        })
+//       resolve(data)
+//     }).catch((e)=>{
+//         reject([])
+//     })
+//   })  
+//    console.log(result)
+//    return { result }
+ 
+// }
+      // export async function getServerSideProps(){
+      //     let firebase = await loadFirebase()
+      //     const result = await new Promise(( resolve , reject )=>{      
+      //     firebase.firestore().
+      //     collection('users').limit(10).get().then((snapshot)=>{
+      //       let data =[]
+      //       snapshot.docs.forEach((doc)=>{
+      //       data.push(Object.assign({ 
+      //         id:doc.id,
+      //       user:doc.data().user}))
+      //       })
+      //       resolve(data)
+      //     }).catch((e)=>{
+      //         reject([])
+      //     })
+      //   })  
+      //   //  console.log(result)
+      //   return { props:{result} }
+      
+      // }
+
+// export async function getStaticProps(){
+//   let firebase = await loadFirebase()
+//   const result = await new Promise(( resolve , reject )=>{      
+//    firebase.firestore().
+//   collection('users').limit(10).get().then((snapshot)=>{
+//     let data =[]
+//     snapshot.docs.forEach((doc)=>{
+//     data.push(Object.assign({ 
+//       id:doc.id,
+//      user:doc.data().user}))
+//      })
+//     resolve(data)
+//   }).catch((e)=>{
+//       reject([])
+//   })
+// })  
+// //  console.log(result)
+//  return { props:{result} }
+
+// }
+
+
+
+
