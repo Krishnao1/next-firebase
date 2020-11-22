@@ -38,7 +38,7 @@ const Blog = (props) => {
                 {props.content}
               </p>
               <Link href="/">
-                <a>Back</a>
+                <a style={{color:'red'}}>Back</a>
               </Link>
             </div>
           )
